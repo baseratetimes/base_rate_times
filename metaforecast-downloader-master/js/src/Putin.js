@@ -41,7 +41,7 @@ async function fetchTimeSeriesData(forecastId) {
         {
             query: `
                 query {
-                    forecast(id: "${forecastId}") {
+                    forecasts(id: "${forecastId}") {
                         timeSeries {
                             time
                             forecast
@@ -52,12 +52,12 @@ async function fetchTimeSeriesData(forecastId) {
         }
     );
     
-    if (!response.data.data || !response.data.data.forecast) {
+    if (!response.data.data || !response.data.data.forecasts) {
         console.error(`Error fetching data for forecast ID ${forecastId}. Response: ${JSON.stringify(response.data)}`);
         return;
     }
     
-    return response.data.data.forecast.timeSeries;
+    return response.data.data.forecasts.timeSeries;
 }
 
 async function fetchAllTimeSeriesData() {
