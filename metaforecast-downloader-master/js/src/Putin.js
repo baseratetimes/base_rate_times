@@ -16,12 +16,53 @@
 // console.log("Forecasts filtered by keyword")
 // console.log(filtered_forecasts_by_keyword)
 
+// ---
+
+//import fs from "fs";
+
+//let forecasts_json = JSON.parse(fs.readFileSync("./data/forecasts.json"))
+
+//let ids = ["goodjudgmentopen-2617", "infer-1263", "metaculus-13930", "polymarket-0x9de1bbb5", "manifold-LZuynBJB6zTiKm0HZuDK", "insight-192967"];
+//let filtered_forecasts_by_id = forecasts_json.filter(forecast => ids.includes(forecast.id));
+
+//console.log(filtered_forecasts_by_id);
+
+// ---
 
 import fs from "fs";
+import axios from "axios";
 
-let forecasts_json = JSON.parse(fs.readFileSync("./data/forecasts.json"))
+async function fetchTimeSeriesData(forecastId) {
+    const response = await axios.post(
+        "https://metaforecast.org/api/graphql",
+        {
+            query: `
+                query {
+                    forecast(id: "${forecastId}") {
+                        timeSeries {
+                            time
+                            forecast
+                        }
+                    }
+                }
+            `
+        }
+    );
+    return response.data.data.forecast.timeSeries;
+}
 
-let ids = ["goodjudgmentopen-2617", "infer-1263", "metaculus-13930", "polymarket-0x9de1bbb5", "manifold-LZuynBJB6zTiKm0HZuDK", "insight-192967"];
-let filtered_forecasts_by_id = forecasts_json.filter(forecast => ids.includes(forecast.id));
+async function fetchAllTimeSeriesData() {
+    let forecasts_json = JSON.parse(fs.readFileSync("./data/forecasts.json"));
+    let ids = ["goodjudgmentopen-2617", "infer-1263", "metaculus-13930", "polymarket-0x9de1bbb5", "manifold-LZuynBJB6zTiKm0HZuDK", "insight-192967"];
+    let timeSeriesDataById = {};
 
-console.log(filtered_forecasts_by_id);
+    for (let id of ids) {
+        console.log(`Fetching time series data for forecast ID ${id}`);
+        timeSeriesDataById[id] = await fetchTimeSeriesData(id);
+    }
+
+    console.log(timeSeriesDataById);
+}
+
+fetchAllTimeSeriesData();
+
