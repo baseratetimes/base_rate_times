@@ -1,0 +1,17 @@
+{
+  "name": "metaforecast-fetcher",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "one": "node src/one.js",
+    "all": "node src/all.js",
+    "filter": "node src/all.js"
+  },
+  "type": "module",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.26.1"
+  }
+}
