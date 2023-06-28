@@ -29,9 +29,6 @@
 
 // ---
 
-import fs from "fs";
-import axios from "axios";
-
 async function fetchTimeSeriesData(forecastId) {
     const response = await axios.post(
         "https://metaforecast.org/api/graphql",
@@ -48,21 +45,13 @@ async function fetchTimeSeriesData(forecastId) {
             `
         }
     );
-    return response.data.data.forecast.timeSeries;
-}
 
-async function fetchAllTimeSeriesData() {
-    let forecasts_json = JSON.parse(fs.readFileSync("./data/forecasts.json"));
-    let ids = ["goodjudgmentopen-2617", "infer-1263", "metaculus-13930", "polymarket-0x9de1bbb5", "manifold-LZuynBJB6zTiKm0HZuDK", "insight-192967"];
-    let timeSeriesDataById = {};
-
-    for (let id of ids) {
-        console.log(`Fetching time series data for forecast ID ${id}`);
-        timeSeriesDataById[id] = await fetchTimeSeriesData(id);
+    // Check if the expected data structure is present
+    if (!response.data.data || !response.data.data.forecast) {
+        console.log(`Unexpected response for forecast ID ${forecastId}:`, response.data);
+        return null;
     }
 
-    console.log(timeSeriesDataById);
+    return response.data.data.forecast.timeSeries;
 }
-
-fetchAllTimeSeriesData();
 
