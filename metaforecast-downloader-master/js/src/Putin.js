@@ -29,47 +29,21 @@
 
 // ---
 
-import fs from "fs";
-import axios from "axios";
+const fs = require('fs');
+const axios = require('axios');
 
 let forecasts_json = JSON.parse(fs.readFileSync("./data/forecasts.json"));
-let ids = ["goodjudgmentopen-2617", "infer-1263", "metaculus-13930", "polymarket-0x9de1bbb5", "manifold-LZuynBJB6zTiKm0HZuDK", "insight-192967"];
+let filtered_forecasts_by_title = forecasts_json.filter(forecast => forecast.title == "Will Sweden join NATO before 2024?");
 
-async function fetchTimeSeriesData(forecastId) {
-    const response = await axios.post(
-        "https://metaforecast.org/api/graphql",
-        {
-            query: `
-                query {
-                    forecasts(id: "${forecastId}") {
-                        timeSeries {
-                            time
-                            forecast
-                        }
-                    }
-                }
-            `
-        }
-    );
-    
-    if (!response.data.data || !response.data.data.forecasts) {
-        console.error(`Error fetching data for forecast ID ${forecastId}. Response: ${JSON.stringify(response.data)}`);
-        return;
-    }
-    
-    return response.data.data.forecasts.timeSeries;
-}
+filtered_forecasts_by_title.forEach(async (forecast) => {
+  try {
+    let response = await axios.get(`https://metaforecast.org/api/timeseries/${forecast.id}`);  // replace with the correct endpoint
+    let timeseries_data = response.data;  // adjust based on the actual response structure
+    console.log("Timeseries data for forecast", forecast.title);
+    console.log(timeseries_data);
+  } catch (error) {
+    console.error("Failed to fetch timeseries data for forecast", forecast.title, error);
+  }
+});
 
-async function fetchAllTimeSeriesData() {
-    let timeSeriesDataById = {};
-
-    for (let id of ids) {
-        console.log(`Fetching time series data for forecast ID ${id}`);
-        timeSeriesDataById[id] = await fetchTimeSeriesData(id);
-    }
-
-    console.log(timeSeriesDataById);
-}
-
-fetchAllTimeSeriesData();
 
