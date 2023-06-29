@@ -29,8 +29,8 @@
 
 // ---
 
-const fs = require('fs');
-const axios = require('axios');
+import fs from 'fs';
+import axios from 'axios';
 
 let forecasts_json = JSON.parse(fs.readFileSync("./data/forecasts.json"));
 let filtered_forecasts_by_title = forecasts_json.filter(forecast => forecast.title == "Will Sweden join NATO before 2024?");
@@ -45,5 +45,3 @@ filtered_forecasts_by_title.forEach(async (forecast) => {
     console.error("Failed to fetch timeseries data for forecast", forecast.title, error);
   }
 });
-
-
