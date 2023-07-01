@@ -29,19 +29,60 @@
 
 // ---
 
-import fs from 'fs';
 import axios from 'axios';
+import { Parser } from 'json2csv';
+import fs from 'fs';
 
-let forecasts_json = JSON.parse(fs.readFileSync("./data/forecasts.json"));
-let filtered_forecasts_by_title = forecasts_json.filter(forecast => forecast.title == "Will Sweden join NATO before 2024?");
-
-filtered_forecasts_by_title.forEach(async (forecast) => {
-  try {
-    let response = await axios.get(`https://metaforecast.org/api/timeseries/${forecast.id}`);  // replace with the correct endpoint
-    let timeseries_data = response.data;  // adjust based on the actual response structure
-    console.log("Timeseries data for forecast", forecast.title);
-    console.log(timeseries_data);
-  } catch (error) {
-    console.error("Failed to fetch timeseries data for forecast", forecast.title, error);
+// Define the GraphQL query.
+const query = `
+  {
+    question(id: "metaculus-10084") {
+      history {
+        options {
+          name
+          probability
+        }
+        fetchedStr
+      }
+    }
   }
+`;
+
+// Send a POST request to the GraphQL endpoint.
+axios({
+  url: 'https://metaforecast.org/api/graphql',
+  method: 'post',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  data: {
+    query: query
+  }
+}).then((response) => {
+  // Check if the request was successful.
+  if (response.status !== 200) {
+    throw new Error('GraphQL query failed');
+  }
+
+  // Extract the time series data.
+  let timeSeriesData = [];
+  for (let historyItem of response.data.data.question.history) {
+    for (let option of historyItem.options) {
+      if (option.name === 'Yes') {
+        timeSeriesData.push({
+          time: historyItem.fetchedStr,
+          probability: option.probability
+        });
+      }
+    }
+  }
+
+  // Convert the time series data to CSV.
+  const json2csvParser = new Parser();
+  const csv = json2csvParser.parse(timeSeriesData);
+
+  // Write the CSV data to a file.
+  fs.writeFileSync('metaculus-10084.csv', csv);
+}).catch((error) => {
+  console.error(error);
 });
