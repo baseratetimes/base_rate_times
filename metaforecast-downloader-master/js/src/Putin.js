@@ -71,4 +71,3 @@ Promise.all(ids.map(fetchDataForId)).then(() => {
 }).catch((error) => {
   console.error(error);
 });
-
