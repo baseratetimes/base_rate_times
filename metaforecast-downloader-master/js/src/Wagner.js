@@ -3,7 +3,7 @@ import { Parser } from 'json2csv';
 import fs from 'fs';
 
 // Define the ids for which we want to fetch data.
-const ids = ["goodjudgmentopen-2617", "infer-1263", "metaculus-13930", "polymarket-0x9de1bbb5", "manifold-LZuynBJB6zTiKm0HZuDK", "insight-192967"];
+const ids = ["goodjudgmentopen-2908", "polymarket-0xb45c4f8a", "manifold-qJTJAf9vafBmAbwnmiKI", "metaculus-10246", "manifold-onhTHDgQVDpX6V5inItM", "metaculus-11589"];
 
 // Initialize an array to hold all time series data.
 let allTimeSeriesData = [];
@@ -67,7 +67,7 @@ Promise.all(ids.map(fetchDataForId)).then(() => {
   const csv = json2csvParser.parse(allTimeSeriesData);
 
   // Write the CSV data to a file.
-  fs.writeFileSync('Putin.csv', csv);
+  fs.writeFileSync('Wagner.csv', csv);
 }).catch((error) => {
   console.error(error);
 });
