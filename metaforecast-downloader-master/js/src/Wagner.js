@@ -46,7 +46,13 @@ async function fetchDataForId(id) {
   let timeSeriesData = [];
   for (let historyItem of response.data.data.question.history) {
     for (let option of historyItem.options) {
-      if (option.name === 'Yes') {
+      if (id === "goodjudgmentopen-2908" && option.name === 'Before 9 July 2023') {
+        timeSeriesData.push({
+          id: id,
+          time: historyItem.fetchedStr,
+          probability: option.probability
+        });
+      } else if (option.name === 'Yes') {
         timeSeriesData.push({
           id: id,
           time: historyItem.fetchedStr,
