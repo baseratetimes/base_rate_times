@@ -3,7 +3,7 @@ import { Parser } from 'json2csv';
 import fs from 'fs';
 
 // Define the ids for which we want to fetch data.
-const ids = ["goodjudgmentopen-2842", "insight-154445", "polymarket-0xda2cef9f", "metaculus-13531", "manifold-8dD3vNDbHnPCx3movLl9"];
+const ids = ["metaculus-13985", "goodjudgmentopen-2657", "manifold-IY4cZAXStA3cvcqCDJqR", "insight-224920"];
 
 // Initialize an array to hold all time series data.
 let allTimeSeriesData = [];
@@ -42,11 +42,14 @@ async function fetchDataForId(id) {
     throw new Error('GraphQL query failed');
   }
 
+  // Define the option we're interested in. This could be 'Yes' or 'Not before 19 August 2023' depending on the id.
+  const targetOption = id === 'goodjudgmentopen-2657' ? 'Not before 19 August 2023' : 'Yes';
+
   // Extract the time series data for this id.
   let timeSeriesData = [];
   for (let historyItem of response.data.data.question.history) {
     for (let option of historyItem.options) {
-      if (option.name === 'Yes') {
+      if (option.name === targetOption) {
         timeSeriesData.push({
           id: id,
           time: historyItem.fetchedStr,
@@ -67,7 +70,7 @@ Promise.all(ids.map(fetchDataForId)).then(() => {
   const csv = json2csvParser.parse(allTimeSeriesData);
 
   // Write the CSV data to a file.
-  fs.writeFileSync('Crimea.csv', csv);
+  fs.writeFileSync('Peace.csv', csv);
 }).catch((error) => {
   console.error(error);
 });
