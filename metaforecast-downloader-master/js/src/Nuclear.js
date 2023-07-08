@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { Parser } from 'json2csv';
 import fs from 'fs';
+import retry from 'async-retry';
 
 // Define the ids for which we want to fetch data.
 const ids = ["metaculus-10154", "metaculus-13171", "goodjudgmentopen-2634", "metaculus-2797", "manifold-CBCpG7AUU4pnsbyBn0bg"];
@@ -26,21 +27,30 @@ async function fetchDataForId(id) {
   `;
 
   // Send a POST request to the GraphQL endpoint.
-  const response = await axios({
-    url: 'https://metaforecast.org/api/graphql',
-    method: 'post',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: {
-      query: query
-    }
-  });
+  const response = await retry(async () => {
+    const res = await axios({
+      url: 'https://metaforecast.org/api/graphql',
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: {
+        query: query
+      }
+    });
 
-  // Check if the request was successful.
-  if (response.status !== 200) {
-    throw new Error('GraphQL query failed');
-  }
+    if (res.status !== 200) {
+      throw new Error('GraphQL query failed');
+    }
+
+    return res;
+  }, {
+    retries: 10, // maximum number of attempts to make
+    minTimeout: 3000, // the number of milliseconds before starting the first retry
+    onRetry: (error) => {
+      console.log(error.message); // log the error message for debugging
+    },
+  });
 
   // Extract the time series data for this id.
   let timeSeriesData = [];
