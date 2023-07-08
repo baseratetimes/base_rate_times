@@ -63,7 +63,7 @@ async function fetchDataForId(id) {
           probability: option.probability
         });
       }
-      else if (option.name === 'Yes') {
+      else if (id !== "goodjudgmentopen-2617" && id !== "infer-1263" && option.name === 'Yes') {
         timeSeriesData.push({
           id: id,
           time: historyItem.fetchedStr,
