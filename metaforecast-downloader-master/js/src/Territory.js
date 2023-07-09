@@ -57,7 +57,7 @@ async function fetchDataForId(id) {
   for (let historyItem of response.data.data.question.history) {
     for (let option of historyItem.options) {
       // Choose target option name based on id.
-      let targetOptionName = id === "goodjudgmentopen-2859" ? "Not before 1 July 2024" : "Yes";
+      let targetOptionName = id === "goodjudgmentopen-2859" ? "Between 1 July 2023 and 31 December 2023" : "Yes";
       if (option.name === targetOptionName) {
         timeSeriesData.push({
           id: id,
