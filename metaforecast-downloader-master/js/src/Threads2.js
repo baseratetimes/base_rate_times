@@ -84,7 +84,7 @@ Promise.all(ids.map(fetchDataForId)).then(() => {
   const csv = json2csvParser.parse(allTimeSeriesData);
 
   // Write the CSV data to a file.
-  fs.writeFileSync('Putin.csv', csv);
+  fs.writeFileSync('Threads2.csv', csv);
 }).catch((error) => {
   console.error(error);
 });
