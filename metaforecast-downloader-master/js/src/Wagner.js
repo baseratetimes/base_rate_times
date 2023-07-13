@@ -45,8 +45,8 @@ async function fetchDataForId(id) {
 
     return res;
   }, {
-    retries: 10, // maximum number of attempts to make
-    minTimeout: 3000, // the number of milliseconds before starting the first retry
+    retries: 60, // maximum number of attempts to make
+    minTimeout: 2000, // the number of milliseconds before starting the first retry
     onRetry: (error) => {
       console.log(error.message); // log the error message for debugging
     },

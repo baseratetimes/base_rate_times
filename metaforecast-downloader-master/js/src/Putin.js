@@ -45,8 +45,8 @@ async function fetchDataForId(id) {
 
     return res;
   }, {
-    retries: 10,
-    minTimeout: 3000, // wait for 3 seconds before retrying
+    retries: 60,
+    minTimeout: 2000, // wait for 3 seconds before retrying
     onRetry: (error) => {
       console.log(error.message); // log the error message for debugging
     },
