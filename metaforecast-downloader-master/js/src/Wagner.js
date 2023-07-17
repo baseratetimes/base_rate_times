@@ -4,7 +4,7 @@ import fs from 'fs';
 import retry from 'async-retry';
 
 // Define the ids for which we want to fetch data.
-const ids = ["goodjudgmentopen-2908", "polymarket-0xb45c4f8a", "manifold-qJTJAf9vafBmAbwnmiKI", "metaculus-10246", "manifold-onhTHDgQVDpX6V5inItM", "metaculus-11589"];
+const ids = ["goodjudgmentopen-2908", "manifold-qJTJAf9vafBmAbwnmiKI", "metaculus-10246", "manifold-onhTHDgQVDpX6V5inItM", "metaculus-11589"];
 
 // Initialize an array to hold all time series data.
 let allTimeSeriesData = [];
